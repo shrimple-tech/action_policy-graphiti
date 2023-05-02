@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Andrei Mochalov"]
   spec.email = ["factyy@gmail.com"]
 
-  spec.summary = "This gem allows you to use  a JSON:API implementation (Graphiti) with ActionPolicy."
+  spec.summary = "This gem allows you to use a JSON:API implementation (Graphiti) with ActionPolicy."
   # spec.description = "TODO: Write a longer description or delete this line."
   spec.homepage = "https://github.com/shrimple-tech/action_policy-graphiti"
   spec.license = "MIT"
