@@ -8,3 +8,5 @@
 /tmp/
 
 .lsp-docker/
+
+Gemfile.lock
