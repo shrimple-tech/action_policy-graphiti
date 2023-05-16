@@ -8,5 +8,6 @@
 /tmp/
 
 .lsp-docker/
+.dockerignore
 
 Gemfile.lock
