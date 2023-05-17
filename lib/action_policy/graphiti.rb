@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "graphiti/version"
+require "graphiti"
+require "action_policy"
 
 module ActionPolicy
   module Graphiti
-    class Error < StandardError; end
-    # Your code goes here...
+    class << self
+      # Which rule to use when no specified (e.g. `authorize: true`)
+      # Defaults to `:show?`
+      attr_accessor :default_authorize_rule
+    end
+
+    self.default_authorize_rule = :show?
   end
 end
