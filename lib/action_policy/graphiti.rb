@@ -3,6 +3,8 @@
 require "graphiti"
 require "action_policy"
 
+require "action_policy/graphiti/automatically_authorized"
+
 module ActionPolicy
   # Top-level module for ActionPolicy - Graphiti integration
   module Graphiti
