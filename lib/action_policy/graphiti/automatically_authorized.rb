@@ -11,8 +11,6 @@ module ActionPolicy
       # Authorization configuration class methods
       # Meant to be used in Graphiti resources
       module ClassMethods
-        class << self
-        end
       end
 
       def self.included(base)
