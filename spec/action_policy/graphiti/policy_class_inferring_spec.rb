@@ -3,7 +3,8 @@
 require "spec_helper"
 
 describe "policy inferring" do
-  it "infers policy class for Graphiti resource" do
-    expect(5).to eql(5)
+  subject(:resource) { TestResource.new }
+  it "infers policy class for a Graphiti resource" do
+    expect(ActionPolicy.lookup(resource)).to eq(TestPolicy)
   end
 end
