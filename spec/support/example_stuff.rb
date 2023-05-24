@@ -13,8 +13,15 @@ class ApplicationResource < Graphiti::Resource
   end
 end
 
+class TestModel
+end
+
 class TestResource < ApplicationResource
   include ActionPolicy::Graphiti::AutomaticallyAuthorized
+
+  self.model = TestModel
+
+  authorize_action :create
 
   attribute :test_value, :integer
 end
@@ -25,5 +32,9 @@ end
 class TestPolicy < ApplicationPolicy
   def index?
     true
+  end
+
+  def create?
+    false
   end
 end
