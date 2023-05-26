@@ -28,39 +28,33 @@ module ActionPolicy
 
         def authorize_read
           after_attributes only: [:show] do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :show
+            authorize! model, with: ActionPolicy.lookup(self), to: :show?, context: { user: current_user }
           end
         end
 
         def authorize_create
           before_save only: [:create] do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :create
+            authorize! model, with: ActionPolicy.lookup(self), to: :create?, context: { user: current_user }
           end
         end
 
         def authorize_update
           before_save only: [:update] do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :update
+            authorize! model, with: ActionPolicy.lookup(self), to: :update?, context: { user: current_user }
           end
         end
 
         def authorize_destroy
           before_destroy do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :destroy
+            authorize! model, with: ActionPolicy.lookup(self), to: :destroy?, context: { user: current_user }
           end
         end
-      end
-
-      def current_user
-        {}
       end
 
       def self.included(base)
         base.include(ActionPolicy::Behaviour)
 
         base.extend(ClassMethods)
-
-        base.authorize :user, through: :current_user
       end
     end
   end
