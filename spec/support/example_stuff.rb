@@ -59,6 +59,7 @@ class TestResource < ApplicationResource
   self.model = TestModel
 
   authorize_action :create
+  authorize_action :update
   authorize_action :destroy
 
   attribute :title, :string
@@ -113,6 +114,10 @@ class TestPolicy < ApplicationPolicy
 
   def create?
     false
+  end
+
+  def update?
+    user.admin?
   end
 
   def destroy?
