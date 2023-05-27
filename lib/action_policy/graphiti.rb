@@ -4,7 +4,7 @@ require "graphiti"
 require "action_policy"
 require "active_support"
 
-require "action_policy/graphiti/automatically_authorized"
+require "action_policy/graphiti/behaviour"
 
 module ActionPolicy
   # Top-level module for ActionPolicy - Graphiti integration

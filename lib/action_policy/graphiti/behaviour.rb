@@ -5,7 +5,7 @@ require "action_policy/graphiti/lookup_chain"
 module ActionPolicy
   module Graphiti
     # Automatically authorize actions
-    module AutomaticallyAuthorized
+    module Behaviour
       # Authorization configuration class methods
       # Meant to be used in Graphiti resources
       module ClassMethods

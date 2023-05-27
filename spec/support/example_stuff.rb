@@ -54,7 +54,7 @@ TEST_MODEL_DATA = [
 ]
 
 class TestResource < ApplicationResource
-  include ActionPolicy::Graphiti::AutomaticallyAuthorized
+  include ActionPolicy::Graphiti::Behaviour
 
   self.model = TestModel
 
