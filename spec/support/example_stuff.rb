@@ -50,7 +50,8 @@ class TestModel
 end
 
 TEST_MODEL_DATA = [
-  { id: 1, title: "Test" }
+  { id: 1, title: "TestRegularUserAccessible" },
+  { id: 2, title: "TestAdminOnlyAccessible" }
 ]
 
 class TestResource < ApplicationResource
@@ -65,11 +66,13 @@ class TestResource < ApplicationResource
   attribute :title, :string
 
   def base_scope
-    {}
+    TEST_MODEL_DATA.map { |d| TestModel.new(d) }
   end
 
-  def resolve(_scope)
-    TEST_MODEL_DATA.map { |d| TestModel.new(d) }
+  authorize_scope :test
+
+  def resolve(scope)
+    scope # Do nothing since we already have an array
   end
 
   # def build(model_class)
@@ -120,9 +123,22 @@ class TestPolicy < ApplicationPolicy
     user.admin?
   end
 
+  # Simulate a conflict between a rule and a scope, despite the action is allowed for regular users
+  # They are prohibited from accessing even-numbered records by a scope rule
   def destroy?
-    user.admin?
+    user.admin? || record.id.even?
+  end
+
+  # Experimental scope, only odd ids for regular users
+  scope_for :array do |array|
+    if user.admin?
+      array
+    else
+      array.filter { |record| record.id.odd? }
+    end
   end
 end
 
 Graphiti.setup!
+
+ActionPolicy::Base.scope_matcher :array, Array
