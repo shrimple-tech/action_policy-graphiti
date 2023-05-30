@@ -14,7 +14,7 @@ module ActionPolicy
           when :index
             raise NotImplementedError, "Index authorization is not yet implemented"
           when :show
-            authorize_read
+            authorize_show
           when :create
             authorize_create
           when :update
@@ -26,7 +26,7 @@ module ActionPolicy
           end
         end
 
-        def authorize_read
+        def authorize_show
           after_attributes only: [:show] do |model|
             authorize! model, with: ActionPolicy.lookup(self), to: :show?, context: { user: current_user }
           end
