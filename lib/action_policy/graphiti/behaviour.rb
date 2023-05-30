@@ -12,9 +12,9 @@ module ActionPolicy
         def authorize_action(action)
           case action
           when :index
-            raise NotImplementedError, "Index authorization is not yet implemented"
+            raise NotImplementedError, "Index authorization is done implicitly by scoping"
           when :show
-            authorize_show
+            raise NotImplementedError, "Show/read authorization is done implicitly by scoping"
           when :create
             authorize_create
           when :update
@@ -23,12 +23,6 @@ module ActionPolicy
             authorize_destroy
           else
             raise ArgumentError, "Unknown action cannot be authorized"
-          end
-        end
-
-        def authorize_show
-          after_attributes only: [:show] do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :show?, context: { user: current_user }
           end
         end
 
