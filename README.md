@@ -1,39 +1,61 @@
-# ActionPolicy::Graphiti
+# Action Policy Graphiti
 
-TODO: Delete this and the text below, and describe your gem
+This gem allows you to use [Action Policy](https://github.com/palkan/action_policy) as an authorization framework for [Graphiti](https://www.graphiti.dev) applications.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/action_policy/graphiti`. To experiment with that code, run `bin/console` for an interactive prompt.
+The following features are currently enabled:
+
+- Authorization of `create`, `update` and `destroy` actions
+- Resource scoping
+
+**This gem is under heavy development, was not yet released (since it is not production ready) so use this gem at your own risk!**
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+**This gem was not yet released and can be installed only via a github link**
 
-Install the gem and add to the application's Gemfile by executing:
+Add this line to your application's Gemfile:
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem "action_policy-graphiti"
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+The integration is done via including a behaviour module into your Graphiti resources:
 
-## Development
+```ruby
+class TestResource < ApplicationResource
+  include ActionPolicy::Graphiti::Behaviour
+end
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Authorization of actions is done via using corresponding class methods:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```ruby
+class TestResource < ApplicationResource
+  include ActionPolicy::Graphiti::Behaviour
+  
+  authorize_action :create
+  authorize_action :update
+  authorize_action :destroy
+end
+```
+**Note:** current implementation is not compatible with `before_save` and `before_destroy` hooks (since it is adding authorization checks as hooks).
+
+Scoping is done via adding the following class method call: 
+```ruby
+class TestResource < ApplicationResource
+  include ActionPolicy::Graphiti::Behaviour
+  
+  authorize_scope :unused_scope_name
+end
+```
+**Note:** current implementation requires you to place `authorize_scope` call **after** the explicit `base_scope` method (scoping is built on base scope modification).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/action_policy-graphiti. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/action_policy-graphiti/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/shrimple-tech/action_policy-graphiti.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the ActionPolicy::Graphiti project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/action_policy-graphiti/blob/main/CODE_OF_CONDUCT.md).
