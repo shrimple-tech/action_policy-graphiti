@@ -49,6 +49,20 @@ module ActionPolicy
             authorize! model, with: ActionPolicy.lookup(self), to: :destroy?, context: { user: current_user }
           end
         end
+
+        def authorize_scope(_scope_name)
+          original_base_scope = instance_method(:base_scope)
+
+          define_method(:base_scope) do |*args, &block|
+            scope = authorized_scope(
+              original_base_scope.bind(self).call(*args, &block),
+              with: ActionPolicy.lookup(self),
+              context: { user: current_user }
+            )
+
+            scope
+          end
+        end
       end
 
       def self.included(base)
