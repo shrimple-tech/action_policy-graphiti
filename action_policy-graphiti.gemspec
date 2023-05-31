@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "This gem allows you to use a JSON:API implementation (Graphiti) with ActionPolicy"
   spec.homepage = "https://github.com/shrimple-tech/action_policy-graphiti"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 2.7.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
 
