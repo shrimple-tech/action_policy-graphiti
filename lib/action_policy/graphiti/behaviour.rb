@@ -9,39 +9,39 @@ module ActionPolicy
       # Authorization configuration class methods
       # Meant to be used in Graphiti resources
       module ClassMethods
+        AUTHORIZABLE_ACTIONS = %i[create update destroy].freeze
+        IMPLICITLY_AUTHORIZABLE_ACTIONS = %i[index show].freeze
+
         def authorize_action(action)
-          case action
-          when :index
-            raise NotImplementedError, "Index authorization is done implicitly by scoping"
-          when :show
-            raise NotImplementedError, "Show/read authorization is done implicitly by scoping"
-          when :create
-            authorize_create
-          when :update
-            authorize_update
-          when :destroy
-            authorize_destroy
+          if AUTHORIZABLE_ACTIONS.include?(action)
+            rule = "#{action}?".to_sym
+
+            if action == :destroy
+              before_destroy do |model|
+                authorize! model, with: ActionPolicy.lookup(self), to: rule, context: { user: current_user }
+              end
+            else
+              before_save only: [action] do |model|
+                authorize! model, with: ActionPolicy.lookup(self), to: rule, context: { user: current_user }
+              end
+            end
+          elsif IMPLICITLY_AUTHORIZABLE_ACTIONS.include?(action)
+            raise ArgumentError, "Index and show authorization is done implicitly by scoping"
           else
             raise ArgumentError, "Unknown action cannot be authorized"
           end
         end
 
         def authorize_create
-          before_save only: [:create] do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :create?, context: { user: current_user }
-          end
+          authorize_action(:create)
         end
 
         def authorize_update
-          before_save only: [:update] do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :update?, context: { user: current_user }
-          end
+          authorize_action(:update)
         end
 
         def authorize_destroy
-          before_destroy do |model|
-            authorize! model, with: ActionPolicy.lookup(self), to: :destroy?, context: { user: current_user }
-          end
+          authorize_action(:destroy)
         end
 
         def authorize_scope(_scope_name)
