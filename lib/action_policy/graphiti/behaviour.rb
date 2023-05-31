@@ -16,20 +16,34 @@ module ActionPolicy
           if AUTHORIZABLE_ACTIONS.include?(action)
             rule = "#{action}?".to_sym
 
-            if action == :destroy
-              before_destroy do |model|
-                authorize! model, with: ActionPolicy.lookup(self), to: rule, context: { user: current_user }
-              end
-            else
-              before_save only: [action] do |model|
-                authorize! model, with: ActionPolicy.lookup(self), to: rule, context: { user: current_user }
-              end
+            callback_and_arguments = callback_and_arguments_for_action(action)
+
+            callback = callback_and_arguments[:callback]
+            arguments = callback_and_arguments[:arguments]
+
+            send(callback, **arguments) do |model|
+              authorize! model, with: ActionPolicy.lookup(self), to: rule, context: { user: current_user }
             end
           elsif IMPLICITLY_AUTHORIZABLE_ACTIONS.include?(action)
             raise ArgumentError, "Index and show authorization is done implicitly by scoping"
           else
             raise ArgumentError, "Unknown action cannot be authorized"
           end
+        end
+
+        def callback_and_arguments_for_action(action)
+          if action == :destroy
+            callback = :before_destroy
+            arguments = {}
+          else
+            callback = :before_save
+            arguments = { only: [action] }
+          end
+
+          {
+            callback: callback,
+            arguments: arguments
+          }
         end
 
         def authorize_create
