@@ -3,9 +3,6 @@
 require "spec_helper"
 
 describe "authorization results" do
-  # let(:created_resource) { TestResource.build(data: { type: "tests", attributes: { title: "Test" } }) }
-  # let(:managed_resource) { TestResource.find(data: { id: 1, type: "tests" }) }
-
   let(:regular_user) { User.new(role: "user") }
   let(:admin_user) { User.new(role: "admin") }
 
