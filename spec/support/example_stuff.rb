@@ -33,7 +33,7 @@ class ApplicationResource < Graphiti::Resource
 end
 
 class TestModel
-  ATTRS = %i[id title].freeze
+  ATTRS = %i[id title callback_marker].freeze
   ATTRS.each { |a| attr_accessor(a) }
 
   def initialize(attrs = {})
@@ -50,14 +50,18 @@ class TestModel
 end
 
 TEST_MODEL_DATA = [
-  { id: 1, title: "TestRegularUserAccessible" },
-  { id: 2, title: "TestAdminOnlyAccessible" }
+  { id: 1, title: "TestRegularUserAccessible", callback_marker: nil },
+  { id: 2, title: "TestAdminOnlyAccessible", callback_marker: nil }
 ]
 
 class TestResource < ApplicationResource
   include ActionPolicy::Graphiti::Behaviour
 
   self.model = TestModel
+
+  before_save only: [:update] do |model|
+    model.callback_marker = true
+  end
 
   authorize_action :create
   authorize_action :update
@@ -120,7 +124,7 @@ class TestPolicy < ApplicationPolicy
   end
 
   def update?
-    user.admin?
+    user.admin? && record.callback_marker
   end
 
   # Simulate a conflict between a rule and a scope, despite the action is allowed for regular users
