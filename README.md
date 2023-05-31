@@ -40,7 +40,7 @@ class TestResource < ApplicationResource
   authorize_action :destroy
 end
 ```
-**Note:** current implementation is not compatible with `before_save` and `before_destroy` hooks (since it is adding authorization checks as hooks).
+**Note:** current implementation requires you to place `authorize_` directives **after** `before_save` and `before_destroy` hooks (since it is adding authorization checks as hooks and we want to work **after** all the regular hooks were completed).
 
 Scoping is done via adding the following class method call: 
 ```ruby
