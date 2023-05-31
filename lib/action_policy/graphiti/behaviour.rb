@@ -58,7 +58,7 @@ module ActionPolicy
           authorize_action(:destroy)
         end
 
-        def authorize_scope(_scope_name)
+        def authorize_scope(_scope_name = nil)
           original_base_scope = instance_method(:base_scope)
 
           define_method(:base_scope) do |*args, &block|

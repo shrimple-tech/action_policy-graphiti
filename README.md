@@ -47,7 +47,7 @@ Scoping is done via adding the following class method call:
 class TestResource < ApplicationResource
   include ActionPolicy::Graphiti::Behaviour
   
-  authorize_scope :unused_scope_name
+  authorize_scope
 end
 ```
 **Note:** current implementation requires you to place `authorize_scope` call **after** the explicit `base_scope` method (scoping is built on base scope modification).
