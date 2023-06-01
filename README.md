@@ -7,7 +7,7 @@ The following features are currently enabled:
 - Authorization of `create`, `update` and `destroy` actions
 - Resource scoping
 
-**This gem is under heavy development, was not yet released (since it is not production ready) so use this gem at your own risk!**
+**This gem is under heavy development, was not yet released (since it is not production ready) so use it at your own risk!**
 
 ## Installation
 
