@@ -28,6 +28,12 @@ class ApplicationResource < Graphiti::Resource
   self.adapter = Graphiti::Adapters::Null
 
   authorize :user, through: :current_user
+  authorize :arbitrary_parameter, through: :parameter
+
+  def parameter
+    5
+  end
+
   def current_user
     raise NotImplementedError, "Use rspec mocks!"
   end
@@ -115,6 +121,7 @@ class TestResource < ApplicationResource
 end
 
 class ApplicationPolicy < ActionPolicy::Base
+  authorize :arbitrary_parameter
 end
 
 class TestPolicy < ApplicationPolicy
@@ -127,7 +134,7 @@ class TestPolicy < ApplicationPolicy
   end
 
   def update?
-    user.admin? && record.callback_marker
+    user.admin? && record.callback_marker && arbitrary_parameter
   end
 
   # Simulate a conflict between a rule and a scope, despite the action is allowed for regular users
