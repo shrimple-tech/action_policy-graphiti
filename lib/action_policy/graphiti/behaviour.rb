@@ -64,8 +64,7 @@ module ActionPolicy
           define_method(:base_scope) do |*args, &block|
             authorized_scope(
               original_base_scope.bind(self).call(*args, &block),
-              with: ActionPolicy.lookup(self),
-              context: { user: current_user }
+              with: ActionPolicy.lookup(self)
             )
           end
         end
