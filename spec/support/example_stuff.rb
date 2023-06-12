@@ -22,10 +22,15 @@ class User
 end
 
 class ApplicationResource < Graphiti::Resource
+  include ActionPolicy::Graphiti::Behaviour
+
   self.abstract_class = true
   self.adapter = Graphiti::Adapters::Null
 
-  attr_reader :current_user
+  authorize :user, through: :current_user
+  def current_user
+    raise NotImplementedError, "Use rspec mocks!"
+  end
 
   def admin?
     current_user.admin?
@@ -55,8 +60,6 @@ TEST_MODEL_DATA = [
 ]
 
 class TestResource < ApplicationResource
-  include ActionPolicy::Graphiti::Behaviour
-
   self.model = TestModel
 
   before_save only: [:update] do |model|
