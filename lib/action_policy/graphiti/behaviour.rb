@@ -12,17 +12,17 @@ module ActionPolicy
         AUTHORIZABLE_ACTIONS = %i[create update destroy].freeze
         IMPLICITLY_AUTHORIZABLE_ACTIONS = %i[index show].freeze
 
-        def authorize_action(action)
+        def authorize_action(action, **arguments)
           if AUTHORIZABLE_ACTIONS.include?(action)
             rule = "#{action}?".to_sym
 
             callback_and_arguments = callback_and_arguments_for_action(action)
 
             callback = callback_and_arguments[:callback]
-            arguments = callback_and_arguments[:arguments]
+            callback_arguments = callback_and_arguments[:arguments]
 
-            send(callback, **arguments) do |model|
-              authorize! model, with: ActionPolicy.lookup(self), to: rule, context: { user: current_user }
+            send(callback, **callback_arguments) do |model|
+              authorize! model, with: ActionPolicy.lookup(self), to: rule, **arguments
             end
           elsif IMPLICITLY_AUTHORIZABLE_ACTIONS.include?(action)
             raise ArgumentError, "Index and show authorization is done implicitly by scoping"
