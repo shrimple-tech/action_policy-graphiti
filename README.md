@@ -52,6 +52,37 @@ end
 ```
 **Note:** current implementation requires you to place `authorize_scope` call **after** the explicit `base_scope` method (scoping is performed by base scope results modification).
 
+You can also use authorization context building inside Graphiti resources (just like with Action Policy in controllers):
+```ruby
+class TestResource < ApplicationResource
+  include ActionPolicy::Graphiti::Behaviour
+  
+  authorize :parameter, through: :acquire_parameter
+  
+  def acquire_parameter
+    # Your code goes here
+  end
+end
+```
+Or in a base class:
+```ruby
+class ApplicationResource < Graphiti::Resource
+  include ActionPolicy::Graphiti::Behaviour
+  
+  authorize :parameter, through: :acquire_parameter
+  
+  def acquire_parameter
+    # Your code goes here
+  end
+end
+```
+And then in a corresponding policy:
+```ruby
+class ApplicationPolicy < ActionPolicy::Base
+  authorize :parameter
+end
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/shrimple-tech/action_policy-graphiti.
