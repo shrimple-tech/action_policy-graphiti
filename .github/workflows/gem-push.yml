@@ -1,4 +1,4 @@
-name: Ruby Gem
+name: Build and push to rubygems
 
 on:
   push:
