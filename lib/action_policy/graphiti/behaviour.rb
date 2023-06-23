@@ -12,17 +12,23 @@ module ActionPolicy
         AUTHORIZABLE_ACTIONS = %i[create update destroy].freeze
         IMPLICITLY_AUTHORIZABLE_ACTIONS = %i[index show].freeze
 
-        def authorize_action(action, **arguments)
+        def authorize_action(action, to: nil, with: nil, **arguments)
           if AUTHORIZABLE_ACTIONS.include?(action)
-            rule = "#{action}?".to_sym
-
             callback_and_arguments = callback_and_arguments_for_action(action)
 
             callback = callback_and_arguments[:callback]
             callback_arguments = callback_and_arguments[:arguments]
 
             send(callback, **callback_arguments) do |model|
-              authorize! model, with: ActionPolicy.lookup(self), to: rule, **arguments
+              rule = to || "#{action}?".to_sym
+
+              policy = if with
+                         with.is_a?(String) ? ActiveSupport::Inflector.safe_constantize(with) : with
+                       else
+                         ActionPolicy.lookup(self)
+                       end
+
+              authorize! model, with: policy, to: rule, **arguments
             end
           elsif IMPLICITLY_AUTHORIZABLE_ACTIONS.include?(action)
             raise ArgumentError, "Index and show authorization is done implicitly by scoping"
@@ -46,25 +52,31 @@ module ActionPolicy
           }
         end
 
-        def authorize_create
-          authorize_action(:create)
+        def authorize_create(**arguments)
+          authorize_action(:create, **arguments)
         end
 
-        def authorize_update
-          authorize_action(:update)
+        def authorize_update(**arguments)
+          authorize_action(:update, **arguments)
         end
 
-        def authorize_destroy
-          authorize_action(:destroy)
+        def authorize_destroy(**arguments)
+          authorize_action(:destroy, **arguments)
         end
 
-        def authorize_scope(_scope_name = nil)
+        def authorize_scope(_scope_name = nil, with: nil)
           original_base_scope = instance_method(:base_scope)
 
           define_method(:base_scope) do |*args, &block|
+            policy = if with
+                       with.is_a?(String) ? ActiveSupport::Inflector.safe_constantize(with) : with
+                     else
+                       ActionPolicy.lookup(self)
+                     end
+
             authorized_scope(
               original_base_scope.bind(self).call(*args, &block),
-              with: ActionPolicy.lookup(self)
+              with: policy
             )
           end
         end
