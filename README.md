@@ -38,6 +38,21 @@ class TestResource < ApplicationResource
   authorize_action :destroy
 end
 ```
+
+Or certain action shortcuts may be used (pay attention to explicit policies and actions):
+
+```ruby
+class TestResource < ApplicationResource
+  include ActionPolicy::Graphiti::Behaviour
+  
+  authorize_create to: :manage_but_not_destroy?
+  authorize_update with: "TestExplicitPolicy", to: :manage_but_not_destroy?
+  authorize_destroy
+end
+```
+
+**Note:** current implementation requires you to use policy names (when specifying explicit policies) instead of classes since it is not guaranteed that policy classes are already loaded **before** the resource classes load.
+
 **Note:** current implementation requires you to place `authorize_` directives **after** `before_save` and `before_destroy` hooks (since it is adding authorization checks as hooks and we want them to be called **after** all the regular hooks were completed).
 
 Scoping is done via adding the following class method call: 
