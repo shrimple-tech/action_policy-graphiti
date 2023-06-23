@@ -46,7 +46,7 @@ class TestResource < ApplicationResource
   include ActionPolicy::Graphiti::Behaviour
   
   authorize_create to: :manage_but_not_destroy?
-  authorize_update with: "TestExplicitPolicy", to: :manage_but_not_destroy?
+  authorize_update with: 'TestExplicitPolicy', to: :manage_but_not_destroy?
   authorize_destroy
 end
 ```
@@ -55,12 +55,13 @@ end
 
 **Note:** current implementation requires you to place `authorize_` directives **after** `before_save` and `before_destroy` hooks (since it is adding authorization checks as hooks and we want them to be called **after** all the regular hooks were completed).
 
-Scoping is done via adding the following class method call: 
+Scoping is done via adding the following class method call (you can specify the explicit policy using `with` argument): 
 ```ruby
 class TestResource < ApplicationResource
   include ActionPolicy::Graphiti::Behaviour
   
-  authorize_scope
+  authorize_scope with: 'TestExplicitPolicy'
+  # or just plain authorize_scope 
 end
 ```
 **Note:** current implementation requires you to place `authorize_scope` call **after** the explicit `base_scope` method (scoping is performed by base scope results modification).
