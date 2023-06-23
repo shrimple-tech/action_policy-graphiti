@@ -56,4 +56,25 @@ describe "authorization results" do
 
     expect(scope_admin_only_part).not_to eq([])
   end
+
+  it "allows to perform an action allowed by an explicit policy" do
+    allow_any_instance_of(TestExplicitResource).to receive(:current_user).and_return(regular_user)
+    managed_resource = TestExplicitResource.find(data: { id: 1, type: "test_explicits" })
+
+    expect { managed_resource.update_attributes }.not_to raise_error
+  end
+
+  it "fails to perform an action prohibited by an explicit policy" do
+    allow_any_instance_of(TestExplicitResource).to receive(:current_user).and_return(regular_user)
+    managed_resource = TestExplicitResource.find(data: { id: 1, type: "test_explicits" })
+
+    expect { managed_resource.destroy }.to raise_error(ActionPolicy::Unauthorized)
+  end
+
+  it "uses the right proxy scope in an explicit policy" do
+    allow_any_instance_of(TestExplicitResource).to receive(:current_user).and_return(regular_user)
+    scope = TestExplicitResource.new.base_scope
+
+    expect(scope.count).to eq(TEST_MODEL_DATA.count)
+  end
 end

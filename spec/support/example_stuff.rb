@@ -60,6 +60,24 @@ class TestModel
   end
 end
 
+class TestExplicitModel
+  ATTRS = %i[id title callback_marker].freeze
+  ATTRS.each { |a| attr_accessor(a) }
+
+  def initialize(attrs = {})
+    attrs.each_pair { |k, v| send(:"#{k}=", v) }
+  end
+
+  def attributes
+    {}.tap do |attrs|
+      ATTRS.each do |name|
+        attrs[name] = send(name)
+      end
+    end
+  end
+end
+
+
 TEST_MODEL_DATA = [
   { id: 1, title: "TestRegularUserAccessible", callback_marker: nil },
   { id: 2, title: "TestAdminOnlyAccessible", callback_marker: nil }
@@ -120,6 +138,24 @@ class TestResource < ApplicationResource
   end
 end
 
+class TestExplicitResource < ApplicationResource
+  self.model = TestExplicitModel
+
+  def base_scope
+    TEST_MODEL_DATA.map { |d| TestExplicitModel.new(d) }
+  end
+
+  authorize_create with: "TestExplicitPolicy", to: :manage_but_not_destroy?
+  authorize_action :update, with: "TestExplicitPolicy", to: :manage_but_not_destroy?
+  authorize_destroy with: "TestExplicitPolicy", to: :destroy?
+
+  authorize_scope with: "TestExplicitPolicy"
+
+  def resolve(scope)
+    scope # Do nothing since we already have an array
+  end
+end
+
 class ApplicationPolicy < ActionPolicy::Base
   authorize :arbitrary_parameter
 end
@@ -150,6 +186,20 @@ class TestPolicy < ApplicationPolicy
     else
       array.filter { |record| record.id.odd? }
     end
+  end
+end
+
+class TestExplicitPolicy < ApplicationPolicy
+  def manage_but_not_destroy?
+    true
+  end
+
+  def destroy?
+    false
+  end
+
+  scope_for :array do |array|
+    array
   end
 end
 
