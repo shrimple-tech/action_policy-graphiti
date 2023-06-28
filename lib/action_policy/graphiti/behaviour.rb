@@ -80,6 +80,14 @@ module ActionPolicy
             )
           end
         end
+
+        def authorize_and_scope_all(**arguments)
+          authorize_scope(**arguments)
+
+          authorize_create(**arguments)
+          authorize_update(**arguments)
+          authorize_destroy(**arguments)
+        end
       end
 
       def self.included(base)
