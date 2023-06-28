@@ -138,6 +138,47 @@ class TestExplicitResource < ApplicationResource
   end
 end
 
+class TestDefaultAuthorizedResource < ApplicationResource
+  self.model = TestModel
+
+  def base_scope
+    TEST_MODEL_DATA.map { |d| TestModel.new(d) }
+  end
+
+  authorize_and_scope_all
+
+  def resolve(scope)
+    scope # Do nothing since we already have an array
+  end
+
+  def assign_attributes(model, attributes)
+    attributes.each_pair do |k, v|
+      model.send(:"#{k}=", v)
+    end
+  end
+
+  def save(model)
+    attrs = model.attributes.dup
+    attrs[:id] ||= TEST_MODEL_DATA.length + 1
+
+    existing = TEST_MODEL_DATA.find { |d| d[:id].to_s == attrs[:id].to_s }
+
+    if existing
+      existing.merge!(attrs)
+    else
+      TEST_MODEL_DATA << attrs
+    end
+
+    model
+  end
+
+  def delete(model)
+    # We don't delete data since we don't want other tests to fail
+
+    model
+  end
+end
+
 class ApplicationPolicy < ActionPolicy::Base
   authorize :arbitrary_parameter
 end
@@ -184,6 +225,17 @@ class TestExplicitPolicy < ApplicationPolicy
     array
   end
 end
+
+class TestDefaultAuthorizedPolicy < ApplicationPolicy
+  def manage?
+    true
+  end
+
+  scope_for :array do |array|
+    array
+  end
+end
+
 
 Graphiti.setup!
 

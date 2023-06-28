@@ -77,4 +77,25 @@ describe "authorization results" do
 
     expect(scope.count).to eq(TEST_MODEL_DATA.count)
   end
+
+  it "allows to perform an action allowed by an explicit allowing policy when using an authorization shortcut" do
+    allow_any_instance_of(TestDefaultAuthorizedResource).to receive(:current_user).and_return(regular_user)
+    managed_resource = TestDefaultAuthorizedResource.find(data: { id: 1, type: "test_default_authorizeds" })
+
+    expect { managed_resource.update_attributes }.not_to raise_error
+  end
+
+  it "allows to perform an action allowed by an explicit allowing policy when using an authorization shortcut" do
+    allow_any_instance_of(TestDefaultAuthorizedResource).to receive(:current_user).and_return(regular_user)
+    managed_resource = TestDefaultAuthorizedResource.find(data: { id: 1, type: "test_default_authorizeds" })
+
+    expect { managed_resource.destroy }.not_to raise_error
+  end
+
+  it "uses the right proxy scope in an explicit allowing policy when using an authorization shortcut" do
+    allow_any_instance_of(TestDefaultAuthorizedResource).to receive(:current_user).and_return(regular_user)
+    scope = TestDefaultAuthorizedResource.new.base_scope
+
+    expect(scope.count).to eq(TEST_MODEL_DATA.count)
+  end
 end
