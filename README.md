@@ -64,7 +64,18 @@ class TestResource < ApplicationResource
   # or just plain authorize_scope 
 end
 ```
-**Note:** current implementation requires you to place `authorize_scope` call **after** the explicit `base_scope` method (scoping is performed by base scope results modification).
+
+You can also use a handy shortcut (you can also use an explicit `with` argument just as with other `authorize_` class methods) to authorize `create`, `update`, `destroy` methods and also apply scoping:
+```ruby
+class TestResource < ApplicationResource
+  include ActionPolicy::Graphiti::Behaviour
+  
+  authorize_and_scope_all with: 'TestExplicitPolicy'
+  # or just plain authorize_and_scope_all if you want to deduce the policy class 
+end
+```
+
+**Note:** current implementation requires you to place `authorize_scope` (and `authorize_and_scope_all` too) call **after** the explicit `base_scope` method (scoping is performed by base scope results modification).
 
 You can also use authorization context building inside Graphiti resources (just like with Action Policy in controllers):
 ```ruby
