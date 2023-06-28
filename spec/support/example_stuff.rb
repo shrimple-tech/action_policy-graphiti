@@ -60,24 +60,6 @@ class TestModel
   end
 end
 
-class TestExplicitModel
-  ATTRS = %i[id title callback_marker].freeze
-  ATTRS.each { |a| attr_accessor(a) }
-
-  def initialize(attrs = {})
-    attrs.each_pair { |k, v| send(:"#{k}=", v) }
-  end
-
-  def attributes
-    {}.tap do |attrs|
-      ATTRS.each do |name|
-        attrs[name] = send(name)
-      end
-    end
-  end
-end
-
-
 TEST_MODEL_DATA = [
   { id: 1, title: "TestRegularUserAccessible", callback_marker: nil },
   { id: 2, title: "TestAdminOnlyAccessible", callback_marker: nil }
@@ -139,10 +121,10 @@ class TestResource < ApplicationResource
 end
 
 class TestExplicitResource < ApplicationResource
-  self.model = TestExplicitModel
+  self.model = TestModel
 
   def base_scope
-    TEST_MODEL_DATA.map { |d| TestExplicitModel.new(d) }
+    TEST_MODEL_DATA.map { |d| TestModel.new(d) }
   end
 
   authorize_create with: "TestExplicitPolicy", to: :manage_but_not_destroy?
