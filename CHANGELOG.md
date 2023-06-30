@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.2.1] - 2023-06-30
+
+- Fix a copy-paste error breaking policy inferring for polymorphic resources
+
 ## [0.2.0] - 2023-06-28
 
 - Enable authorization shortcuts
