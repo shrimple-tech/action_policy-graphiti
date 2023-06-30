@@ -15,7 +15,7 @@ module ActionPolicy
       def self.base_resource_class(polymorphic_resource)
         return unless ResourceValidator.polymorphic_graphiti_resource?(polymorphic_resource)
 
-        resource_class = resource.is_a?(Class) ? resource : resource.class
+        resource_class = polymorphic_resource.is_a?(Class) ? polymorphic_resource : polymorphic_resource.class
 
         polymorphic_marker_index = resource_class.ancestors.find_index(::Graphiti::Resource::Polymorphism)
 
