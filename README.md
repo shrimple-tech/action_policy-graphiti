@@ -7,8 +7,6 @@ The following features are currently enabled:
 - Authorization of `create`, `update` and `destroy` actions
 - Resource scoping
 
-**This gem is under heavy development so use it at your own risk!**
-
 ## Installation
 
 Add this line to your application's Gemfile:
