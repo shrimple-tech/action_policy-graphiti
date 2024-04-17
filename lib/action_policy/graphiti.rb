@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+require "active_support"
 require "graphiti"
 require "action_policy"
-require "active_support"
 
 require "action_policy/graphiti/behaviour"
 
