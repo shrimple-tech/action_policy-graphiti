@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "ostruct"
 require "action_policy-graphiti"
 
 # Load all the testing examples stuff
